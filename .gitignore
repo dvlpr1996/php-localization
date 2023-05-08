@@ -1,0 +1,7 @@
+doc/
+lang/
+vendor/
+.vscode/
+index.php
+.phpunit.cache
+.phpunit.result.cache

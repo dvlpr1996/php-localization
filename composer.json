@@ -1,0 +1,41 @@
+{
+    "name": "dvlpr1996/php-localization",
+    "description": "Php Localization Package",
+    "keywords": [
+        "php",
+        "localization",
+        "Associative Array",
+        "php-localization",
+        "Json File"
+    ],
+    "homepage": "https://github.com/dvlpr1996/php-localization",
+    "license": "MIT",
+    "type": "library",
+    "require": {
+        "php": "^8.0"
+    },
+    "minimum-stability": "stable",
+    "authors": [
+        {
+            "name": "Nima",
+            "email": "nimajahanbakhshian@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/dvlpr1996/php-localization/issues",
+        "source": "https://github.com/dvlpr1996/php-localization"
+    },
+    "require-dev": {
+        "symfony/var-dumper": "^6.2",
+        "phpunit/phpunit": "^10.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "PhpLocalization\\": "src/"
+        },
+        "files": [
+            "./src/PhpLocalizationHelpers.php"
+        ]
+    }
+}
