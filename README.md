@@ -1,4 +1,4 @@
-# Php Localization
+# PHP Localization
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
@@ -11,15 +11,16 @@ Php Localization Library
 ## Features
 
 Localization With 3 Drivers
+
 - Array
 - Json
-- Gettext
+- 
 
-## Usage
+Polarization
 
-### Array Driver Usage
+## Documentation
 
-### Json Driver Usage
+See the [documentation](CHANGELOG.md) for detailed installation and usage instructions.
 
 ## Changelog
 
