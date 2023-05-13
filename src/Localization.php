@@ -27,6 +27,20 @@ class Localization
         $this->localizatorSetter($this->config->driver);
     }
 
+    public function lang(string $key, array $replacement = [])
+    {
+        $file = $this->getTranslateFile($key);
+        $translateKey = $this->getTranslateKey($key);
+
+        if (is_array($translateKey)) {
+            return $this->localizator->all($file);
+        }
+
+        if (is_string($translateKey)) {
+            return safeText($this->localizator->get($file, $translateKey, $replacement));
+        }
+    }
+
     private function getLocalizatorClassName(string $className): string
     {
         $fullClassName =  self::LOCALIZATOR_NAMESPACE . ucwords($className . 'Localizator');
@@ -44,21 +58,6 @@ class Localization
     private function setLocalizatorClass(Localizator $localizator)
     {
         $this->localizator = $localizator;
-    }
-
-    public function lang(string $key, array $replacement = [])
-    {
-        $file = $this->getTranslateFile($key);
-        $translateKey = $this->getTranslateKey($key);
-
-        if (is_array($translateKey)) {
-            return $this->localizator->all($file);
-        }
-
-        // todo : e func for return
-        if (is_string($translateKey)) {
-            return $this->localizator->get($file, $translateKey, $replacement);
-        }
     }
 
     private function getTranslateKey(string $key)
@@ -86,7 +85,7 @@ class Localization
 
         $dir = $this->config->langDir . $this->config->defaultLang . '/' . $key[0] . $extension;
 
-        if (!is_readable($dir) && !is_file($dir)) {
+        if (!checkFile($dir)) {
             throw new \Exception($dir . ' not exists');
         }
 
