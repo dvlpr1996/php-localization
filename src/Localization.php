@@ -27,26 +27,44 @@ class Localization
         $this->localizatorSetter($this->config->driver);
     }
 
-    public function lang(string $key, array $replacement = [])
+    public function lang(string $key, array $replacement = []): array|string
     {
         $file = $this->getTranslateFile($key);
         $translateKey = $this->getTranslateKey($key);
 
-        if (is_array($translateKey)) {
-            return $this->localizator->all($file);
-        }
+        if ($this->config->driver === 'json')
+            $translateKey = $this->getTranslateKey($this->config->defaultLang . '.' . $key);
 
-        if (is_string($translateKey)) {
-            return safeText($this->localizator->get($file, $translateKey, $replacement));
-        }
+        if (is_array($translateKey))
+            return $this->localizator->all($file);
+
+        if (is_string($translateKey))
+            $text = $this->localizator->get($translateKey, $this->data($file), $replacement);
+
+        return safeText($text);
+    }
+
+    private function data(string $file): array
+    {
+        return [
+            'file' => $file,
+            'defaultLang' => $this->config->defaultLang,
+            'fallBackLang' => $this->config->fallBackLang,
+        ];
     }
 
     private function getLocalizatorClassName(string $className): string
     {
-        $fullClassName =  self::LOCALIZATOR_NAMESPACE . ucwords($className . 'Localizator');
+        $fullClassName =  $this->fullClassName($className);
+
         return class_exists($fullClassName)
             ? $fullClassName
             : throw new \Exception($className . ' Localizator not exists');
+    }
+
+    private function fullClassName(string $className): string
+    {
+        return self::LOCALIZATOR_NAMESPACE . ucwords($className . 'Localizator');
     }
 
     private function localizatorSetter($driver)
@@ -72,9 +90,8 @@ class Localization
 
     private function getTranslateFile(string $key)
     {
-        if (empty($key)) {
+        if (empty($key))
             throw new \Exception('key parameter can not be empty');
-        }
 
         $key = explode('.', $key);
 
@@ -83,12 +100,27 @@ class Localization
             'json' =>  '.json',
         };
 
-        $dir = $this->config->langDir . $this->config->defaultLang . '/' . $key[0] . $extension;
+        $translateFilePath = match ($extension) {
+            '.php' => $this->baseLanguagePath() . '/' . $key[0] . $extension,
+            '.json' => $this->baseLanguagePath() . $extension,
+        };
 
-        if (!checkFile($dir)) {
-            throw new \Exception($dir . ' not exists');
-        }
+        return checkFile($translateFilePath)
+            ? $translateFilePath
+            : throw new \Exception($translateFilePath . ' not exists');
+    }
 
-        return $dir;
+    private function baseLanguagePath(): string
+    {
+        $baseLanguagePath = $this->config->langDir . $this->config->defaultLang;
+
+        return checkFile($baseLanguagePath)
+            ? $baseLanguagePath
+            : throw new \Exception($baseLanguagePath . ' not exists');
+    }
+
+    public function __toString(): string
+    {
+        return __CLASS__;
     }
 }

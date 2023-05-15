@@ -16,13 +16,16 @@ use PhpLocalization\Localizators\Contract\AbstractLocalizator as Localizator;
 
 class JsonLocalizator extends Localizator
 {
-    public function get(string $file, string $key, array $replacement = []): string
+    public function get(string $key, array $data, array $replacement = []): string
     {
-        return $this->getDataByArray($file, $key, $replacement);
+        return $this->getDataByArray($data['file'], $key, $replacement, $this->fallback($data));
     }
 
     public function all(string $file): array
     {
+        if (!checkFile($file))
+            throw new \Exception($file . ' not exists');
+
         return ($this->isJson(file_get_contents($file)))
             ? json_decode(file_get_contents($file), true)
             : throw new \Exception('json file is not valid');
@@ -38,4 +41,5 @@ class JsonLocalizator extends Localizator
 
         return true;
     }
+
 }

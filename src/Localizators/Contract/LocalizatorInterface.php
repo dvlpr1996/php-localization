@@ -14,6 +14,7 @@ namespace PhpLocalization\Localizators\Contract;
 
 interface LocalizatorInterface
 {
-    public function get(string $file, string $key, array $replacement = []): string;
+    public function get(string $key, array $data, array $replacement = []): string;
+
     public function all(string $file): array;
 }

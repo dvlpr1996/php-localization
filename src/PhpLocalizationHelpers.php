@@ -9,6 +9,11 @@
 
 declare(strict_types=1);
 
+/**
+ * Tells Whether A File Exists And Is A Regular File
+ * @param string $fileDir
+ * @return bool
+ */
 if (!function_exists('checkFile')) {
     function checkFile(string $fileDir): bool
     {
@@ -16,6 +21,11 @@ if (!function_exists('checkFile')) {
     }
 }
 
+/**
+ * Sanitize Values In Language Files
+ * @param string string
+ * @return string
+ */
 if (!function_exists('safeText')) {
     function safeText(string $string): string
     {

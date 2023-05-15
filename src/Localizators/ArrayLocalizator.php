@@ -16,16 +16,15 @@ use PhpLocalization\Localizators\Contract\AbstractLocalizator as Localizator;
 
 class ArrayLocalizator extends Localizator
 {
-    public function get(string $file, string $key, array $replacement = []): string
+    public function get(string $key, array $data, array $replacement = []): string
     {
-        return $this->getDataByArray($file, $key, $replacement);
+        return $this->getDataByArray($data['file'], $key, $replacement, $this->fallback($data));
     }
 
     public function all(string $file): array
     {
-        if (!is_readable($file) && !is_file($file)) {
-            throw new \Exception($file . ' not exists');
-        }
-        return require_once $file;
+        return checkFile($file)
+            ? require_once $file
+            : throw new \Exception($file . ' Not Exists ');
     }
 }

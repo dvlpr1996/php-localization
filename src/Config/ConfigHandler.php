@@ -8,8 +8,6 @@
  * @License: MIT License Copyright (c) 2023 (until present) Nima jahan bakhshian
  */
 
-// todo : exception message
-
 declare(strict_types=1);
 
 namespace PhpLocalization\Config;
@@ -40,6 +38,7 @@ class ConfigHandler
             'driver' => $this->checkDriver($this->$property),
             'langDir' =>  $this->checkLangDir($this->$property),
             'defaultLang' =>  $this->checkDefaultLang($this->$property),
+            'fallBackLang' =>  $this->checkFallBckLang($this->$property),
         };
     }
     public function __toString(): string
@@ -61,19 +60,27 @@ class ConfigHandler
             : throw new \Exception($path . ' not exists');
     }
 
-    private function checkDefaultLang(string $path)
+    private function checkDefaultLang(string $defaultLang)
     {
-        return (is_dir($this->langDir . $path))
-            ? $path
-            : throw new \Exception($path . ' not exists');
+        return (is_dir($this->langDir . $defaultLang))
+            ? $defaultLang
+            : throw new \Exception($defaultLang . ' not exists');
     }
 
-    private function resolveConfigKey(?string $configKey): ?string
+    private function checkFallBckLang(?string $fallBckLang)
     {
-        if (empty($configKey) && !is_null($configKey)) {
-            throw new \Exception('Config Key can not be empty');
-        }
+        if (is_null($fallBckLang) || empty($fallBckLang))
+            return;
 
-        return $configKey;
+        return (is_dir($this->langDir . $fallBckLang))
+            ? $fallBckLang
+            : throw new \Exception($fallBckLang . ' not exists');
+    }
+
+    private function resolveConfigKey(?string $configKey)
+    {
+        return (!empty($configKey) || !is_null($configKey))
+            ? $configKey
+            : throw new \Exception('Config array Key can not be empty or null');
     }
 }

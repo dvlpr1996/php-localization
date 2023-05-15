@@ -16,7 +16,8 @@ use PhpLocalization\Localizators\Contract\LocalizatorInterface as Localizator;
 
 abstract class AbstractLocalizator implements Localizator
 {
-    public abstract function get(string $file, string $key, array $replacement = []): string;
+    public abstract function get(string $key, array $data, array $replacement = []): string;
+
     public abstract function all(string $file): array;
 
     protected function replacement(array $replacement, string $data)
@@ -39,13 +40,11 @@ abstract class AbstractLocalizator implements Localizator
         $key = array_keys($replacement)[0];
         $value = array_values($replacement)[0];
 
-        if (!is_string($key) || !preg_match('/^:[a-zA-Z0-9]+/', $key)) {
+        if (!is_string($key))
             throw new \Exception($key . 'key replacement parameter not in valid shape');
-        }
 
-        if (!is_string($value) || !preg_match('/[a-zA-Z0-9]+/', $value)) {
+        if (!is_string($value))
             throw new \Exception($value . ' value replacement parameter should be string');
-        }
     }
 
     protected function detectCase(string $string)
@@ -53,25 +52,37 @@ abstract class AbstractLocalizator implements Localizator
         $string = substr($string, 1);
 
         if (preg_match('/\b[A-Z0-9]+[a-z0-9]+\b/', $string)) return 'pascal';
-
         if (preg_match('/\b[A-Z0-9]+\b/', $string)) return 'upper';
-
         if (preg_match('/\b[a-z0-9]+\b/', $string)) return 'lower';
     }
 
-    protected function getDataByArray(string $file, string $key, array $replacement = []): string
+    protected function fallback(array $data)
     {
+        if (is_null($data['fallBackLang'])) return;
+
+        $dir = str_replace($data['defaultLang'], $data['fallBackLang'], $data['file']);
+
+        return checkFile($dir) ? $dir : throw new \Exception($dir . ' Not Exists ');
+    }
+
+    protected function getDataByArray(
+        string $file,
+        string $key,
+        array $replacement = [],
+        string $fallBack = null
+    ): string {
+
+        $fallBackData = isset($fallBack) ? $this->all($fallBack) : null;
         $data = $this->all($file);
 
         foreach (explode('.', $key) as $segment) {
-            if (!isset($data[$segment])) return '';
+            if (!isset($data[$segment]))
+                $data = $fallBackData;
             $data = $data[$segment] ?? '';
         }
 
-        if (!is_null($replacement) && !empty($replacement)) {
-            return $this->replacement($replacement, $data);
-        }
-
-        return $data;
+        return (!is_null($replacement) && !empty($replacement))
+            ? $this->replacement($replacement, $data)
+            : $data;
     }
 }
