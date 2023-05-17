@@ -12,27 +12,56 @@ declare(strict_types=1);
 
 namespace PhpLocalization\Config;
 
-class ConfigHandler
+use PhpLocalization\Exceptions\File\FileException;
+use PhpLocalization\Exceptions\Config\ConfigInvalidValueException;
+use PhpLocalization\Exceptions\Config\MissingConfigOptionsException;
+
+final class ConfigHandler
 {
     private string $driver;
     private string $langDir;
     private ?string $fallBackLang;
     private string $defaultLang = 'en';
     private array $allowedDrivers = ['array', 'json', 'gettext'];
+    private array $allowedConfigs = [
+        'driver', 'langDir', 'defaultLang', 'fallBackLang'
+    ];
 
-    public function __construct(array $config = [])
+    public function __construct(array $configs)
     {
-        $this->driver = $this->resolveConfigKey($config['driver']);
-        $this->langDir = $this->resolveConfigKey($config['langDir']);
-        $this->defaultLang = $this->resolveConfigKey($config['defaultLang']);
-        $this->fallBackLang = $this->resolveConfigKey($config['fallBackLang']);
+        $this->checkConfigs($configs);
+
+        $this->driver = $configs['driver'];
+        $this->langDir = $configs['langDir'];
+        $this->defaultLang = $configs['defaultLang'];
+        $this->fallBackLang = $configs['fallBackLang'];
+    }
+
+    /**
+     * Validation Configs
+     *
+     * @param array $configs
+     * @throws \PhpLocalization\Exceptions\Config\MissingConfigOptionsException
+     * @throws \PhpLocalization\Exceptions\Config\ConfigInvalidValueException
+     * @return void
+     */
+    private function checkConfigs(array $configs): void
+    {
+        $diffConfigs = array_diff($this->allowedConfigs, array_values(array_keys($configs)));
+
+        if (!empty($diffConfigs))
+            throw new MissingConfigOptionsException();
+
+        foreach ($configs as $key => $value) {
+            if (!is_string($value) || empty($value))
+                throw new ConfigInvalidValueException('Value Can Not Be Empty Or Null');
+        }
     }
 
     public function __get(string $property)
     {
-        if (!property_exists($this, $property)) {
-            throw new \Exception($property . ' not exists');
-        }
+        if (!property_exists($this, $property))
+            throw new \Exception($property . 'Not Exists');
 
         return match ($property) {
             'driver' => $this->checkDriver($this->$property),
@@ -41,32 +70,62 @@ class ConfigHandler
             'fallBackLang' =>  $this->checkFallBckLang($this->$property),
         };
     }
+
     public function __toString(): string
     {
         return __CLASS__;
     }
 
+    /**
+     * Validation Driver
+     *
+     * @param string $driver
+     * @throws \PhpLocalization\Exceptions\Config\ConfigInvalidValueException
+     * @return string
+     * Driver If Is Valid Otherwise Return ConfigInvalidValueException
+     */
     private function checkDriver(string $driver)
     {
         return in_array(strtolower($driver), $this->allowedDrivers)
             ? $driver
-            : throw new \Exception($driver . ' not allowed');
+            : throw new ConfigInvalidValueException($driver . ' Driver Not Allowed');
     }
 
+    /**
+     * Validation LangDir Path
+     *
+     * @param string $path
+     * @throws \PhpLocalization\Exceptions\File\FileException
+     * @return string
+     * langDir if Exists or return FileException
+     */
     private function checkLangDir(string $path)
     {
-        return (is_dir($path))
-            ? $path
-            : throw new \Exception($path . ' not exists');
+        return (is_dir($path)) ? $path : throw new FileException($path);
     }
 
+    /**
+     * Validation defaultLang Path
+     *
+     * @param string $path
+     * @throws \PhpLocalization\Exceptions\File\FileException
+     * @return string
+     * defaultLang if Exists or return FileException
+     */
     private function checkDefaultLang(string $defaultLang)
     {
         return (is_dir($this->langDir . $defaultLang))
             ? $defaultLang
-            : throw new \Exception($defaultLang . ' not exists');
+            : throw new FileException($defaultLang);
     }
 
+    /**
+     * validation FallBckLang
+     *
+     * @param string|null $fallBckLang
+     * @throws \PhpLocalization\Exceptions\File\FileException
+     * @return $fallBckLang if isset or exists
+     */
     private function checkFallBckLang(?string $fallBckLang)
     {
         if (is_null($fallBckLang) || empty($fallBckLang))
@@ -74,13 +133,6 @@ class ConfigHandler
 
         return (is_dir($this->langDir . $fallBckLang))
             ? $fallBckLang
-            : throw new \Exception($fallBckLang . ' not exists');
-    }
-
-    private function resolveConfigKey(?string $configKey)
-    {
-        return (!empty($configKey) || !is_null($configKey))
-            ? $configKey
-            : throw new \Exception('Config array Key can not be empty or null');
+            : throw new FileException($fallBckLang);
     }
 }
