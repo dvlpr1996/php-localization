@@ -12,10 +12,13 @@ declare(strict_types=1);
 
 namespace PhpLocalization;
 
+use PhpLocalization\Exceptions\File\FileException;
 use PhpLocalization\Config\ConfigHandler as Config;
+use PhpLocalization\Exceptions\Localizator\LocalizatorsException;
+use PhpLocalization\Exceptions\Localizator\ClassNotFoundException;
 use PhpLocalization\Localizators\Contract\LocalizatorInterface as Localizator;
 
-class Localization
+final class Localization
 {
     private Config $config;
     private Localizator $localizator;
@@ -27,6 +30,14 @@ class Localization
         $this->localizatorSetter($this->config->driver);
     }
 
+    /**
+     * Retrieve Lines Of Text From Language File
+     * Or Retrieve All Lines From Language File
+     *
+     * @param string $key
+     * @param array $replacement
+     * @return array|string
+     */
     public function lang(string $key, array $replacement = []): array|string
     {
         $file = $this->getTranslateFile($key);
@@ -44,6 +55,12 @@ class Localization
         return safeText($text);
     }
 
+    /**
+     * Prepared Data For Lang Based On Configs
+     *
+     * @param string $file
+     * @return array
+     */
     private function data(string $file): array
     {
         return [
@@ -59,7 +76,7 @@ class Localization
 
         return class_exists($fullClassName)
             ? $fullClassName
-            : throw new \Exception($className . ' Localizator not exists');
+            : throw new ClassNotFoundException($className . ' Localizator not exists');
     }
 
     private function fullClassName(string $className): string
@@ -91,7 +108,7 @@ class Localization
     private function getTranslateFile(string $key)
     {
         if (empty($key))
-            throw new \Exception('key parameter can not be empty');
+            throw new LocalizatorsException('Key Parameter Can Not Be Empty');
 
         $key = explode('.', $key);
 
@@ -107,7 +124,7 @@ class Localization
 
         return checkFile($translateFilePath)
             ? $translateFilePath
-            : throw new \Exception($translateFilePath . ' not exists');
+            : throw new FileException($translateFilePath);
     }
 
     private function baseLanguagePath(): string
@@ -116,7 +133,7 @@ class Localization
 
         return checkFile($baseLanguagePath)
             ? $baseLanguagePath
-            : throw new \Exception($baseLanguagePath . ' not exists');
+            : throw new FileException($baseLanguagePath);
     }
 
     public function __toString(): string

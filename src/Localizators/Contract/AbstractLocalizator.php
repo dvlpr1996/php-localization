@@ -12,14 +12,23 @@ declare(strict_types=1);
 
 namespace PhpLocalization\Localizators\Contract;
 
+use PhpLocalization\Exceptions\File\FileException;
+use PhpLocalization\Exceptions\Localizator\LocalizatorsException;
 use PhpLocalization\Localizators\Contract\LocalizatorInterface as Localizator;
 
 abstract class AbstractLocalizator implements Localizator
 {
+    public abstract function all(string $file): array;
     public abstract function get(string $key, array $data, array $replacement = []): string;
 
-    public abstract function all(string $file): array;
-
+    /**
+     * handle replacement param
+     *
+     * @param array $replacement
+     * @param string $data
+     * @return string
+     * return line of text from language file with replacement params
+     */
     protected function replacement(array $replacement, string $data)
     {
         $this->checkReplacement($replacement);
@@ -35,16 +44,24 @@ abstract class AbstractLocalizator implements Localizator
         return $data;
     }
 
+    /**
+     * Validation Replacement Param
+     *
+     * @param array $replacement
+     * @throws \PhpLocalization\Exceptions\Localizator\LocalizatorsException
+     * @throws \PhpLocalization\Exceptions\Localizator\LocalizatorsException
+     * return LocalizatorsException if replacement is not valid
+     */
     protected function checkReplacement(array $replacement)
     {
         $key = array_keys($replacement)[0];
         $value = array_values($replacement)[0];
 
         if (!is_string($key))
-            throw new \Exception($key . 'key replacement parameter not in valid shape');
+            throw new LocalizatorsException($key . ' Key Replacement Is Not Valid');
 
         if (!is_string($value))
-            throw new \Exception($value . ' value replacement parameter should be string');
+            throw new LocalizatorsException($value . ' Value Replacement Should Be String');
     }
 
     protected function detectCase(string $string)
@@ -56,13 +73,19 @@ abstract class AbstractLocalizator implements Localizator
         if (preg_match('/\b[a-z0-9]+\b/', $string)) return 'lower';
     }
 
-    protected function fallback(array $data)
+    /**
+     * handle fallBack config
+     *
+     * @param array $data
+     * @throws \PhpLocalization\Exceptions\File\FileException
+     */
+    protected function fallBack(array $data)
     {
         if (is_null($data['fallBackLang'])) return;
 
         $dir = str_replace($data['defaultLang'], $data['fallBackLang'], $data['file']);
 
-        return checkFile($dir) ? $dir : throw new \Exception($dir . ' Not Exists ');
+        return checkFile($dir) ? $dir : throw new FileException($dir);
     }
 
     protected function getDataByArray(
