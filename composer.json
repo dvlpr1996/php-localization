@@ -37,5 +37,14 @@
         "files": [
             "./src/PhpLocalizationHelpers.php"
         ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "PhpLocalization\\Tests\\": "Tests/Unit/"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
     }
 }
