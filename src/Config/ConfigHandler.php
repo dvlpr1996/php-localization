@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace PhpLocalization\Config;
 
 use PhpLocalization\Exceptions\File\FileException;
+use PhpLocalization\Exceptions\PropertyNotExistsException;
 use PhpLocalization\Exceptions\Config\ConfigInvalidValueException;
 use PhpLocalization\Exceptions\Config\MissingConfigOptionsException;
 
@@ -22,7 +23,9 @@ final class ConfigHandler
     private string $langDir;
     private ?string $fallBackLang;
     private string $defaultLang = 'en';
+
     private array $allowedDrivers = ['array', 'json', 'gettext'];
+
     private array $allowedConfigs = [
         'driver', 'langDir', 'defaultLang', 'fallBackLang'
     ];
@@ -45,7 +48,7 @@ final class ConfigHandler
      * @throws \PhpLocalization\Exceptions\Config\ConfigInvalidValueException
      * @return void
      */
-    private function checkConfigs(array $configs): void
+    public function checkConfigs(array $configs): void
     {
         $diffConfigs = array_diff($this->allowedConfigs, array_values(array_keys($configs)));
 
@@ -53,6 +56,9 @@ final class ConfigHandler
             throw new MissingConfigOptionsException();
 
         foreach ($configs as $key => $value) {
+            if ($key === 'fallBackLang' && is_null($value) || empty($value))
+                continue;
+
             if (!is_string($value) || empty($value))
                 throw new ConfigInvalidValueException('Value Can Not Be Empty Or Null');
         }
@@ -61,13 +67,13 @@ final class ConfigHandler
     public function __get(string $property)
     {
         if (!property_exists($this, $property))
-            throw new \Exception($property . 'Not Exists');
+            throw new PropertyNotExistsException($property);
 
         return match ($property) {
             'driver' => $this->checkDriver($this->$property),
-            'langDir' =>  $this->checkLangDir($this->$property),
+            'langDir' =>  $this->checkDirectory($this->$property),
             'defaultLang' =>  $this->checkDefaultLang($this->$property),
-            'fallBackLang' =>  $this->checkFallBckLang($this->$property),
+            'fallBackLang' =>  $this->checkFallBackLang($this->$property),
         };
     }
 
@@ -92,19 +98,6 @@ final class ConfigHandler
     }
 
     /**
-     * Validation LangDir Path
-     *
-     * @param string $path
-     * @throws \PhpLocalization\Exceptions\File\FileException
-     * @return string
-     * langDir if Exists or return FileException
-     */
-    private function checkLangDir(string $path)
-    {
-        return (is_dir($path)) ? $path : throw new FileException($path);
-    }
-
-    /**
      * Validation defaultLang Path
      *
      * @param string $path
@@ -112,11 +105,9 @@ final class ConfigHandler
      * @return string
      * defaultLang if Exists or return FileException
      */
-    private function checkDefaultLang(string $defaultLang)
+    private function checkDefaultLang(string $defaultLang): string
     {
-        return (is_dir($this->langDir . $defaultLang))
-            ? $defaultLang
-            : throw new FileException($defaultLang);
+        return $this->checkDirectory($this->langDir . $defaultLang);
     }
 
     /**
@@ -126,13 +117,16 @@ final class ConfigHandler
      * @throws \PhpLocalization\Exceptions\File\FileException
      * @return $fallBckLang if isset or exists
      */
-    private function checkFallBckLang(?string $fallBckLang)
+    private function checkFallBackLang(?string $fallBckLang): ?string
     {
         if (is_null($fallBckLang) || empty($fallBckLang))
-            return;
+            return null;
 
-        return (is_dir($this->langDir . $fallBckLang))
-            ? $fallBckLang
-            : throw new FileException($fallBckLang);
+        return $this->checkDirectory($this->langDir . $fallBckLang);
+    }
+
+    private function checkDirectory(string $path): string
+    {
+        return (is_dir($path)) ? realpath($path) : throw new FileException($path);
     }
 }
