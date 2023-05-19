@@ -14,8 +14,6 @@ use PhpLocalization\Exceptions\Localizator\LocalizatorsException;
 final class AbstractLocalizatorTest extends TestCase
 {
     private AbstractLocalizator $abstractLocalizator;
-    private string $file = __DIR__ . '/../../../../lang/en/login.php';
-    private string $fallBack = __DIR__ . '/../../../../lang/fa/login.php';
 
     private function getMethodNameByReflectionObject(string $name)
     {

@@ -15,7 +15,7 @@ namespace PhpLocalization\Localizators;
 use PhpLocalization\Exceptions\File\FileException;
 use PhpLocalization\Localizators\Contract\AbstractLocalizator as Localizator;
 
-class ArrayLocalizator extends Localizator
+final class ArrayLocalizator extends Localizator
 {
     public function get(string $key, array $data, array $replacement = []): string
     {
