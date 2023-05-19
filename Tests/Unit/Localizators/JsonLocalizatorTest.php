@@ -5,19 +5,20 @@ declare(strict_types=1);
 namespace PhpLocalization\Tests\Localizators;
 
 use PHPUnit\Framework\TestCase;
+use PhpLocalization\Localizators\JsonLocalizator;
 use PhpLocalization\Exceptions\File\FileException;
-use PhpLocalization\Localizators\ArrayLocalizator;
+use PhpLocalization\Exceptions\Localizator\JsonValidationException;
 
 /**
- * @covers ArrayLocalizator
+ * @covers JsonLocalizator
  */
-final class ArrayLocalizatorTest extends TestCase
+final class JsonLocalizatorTest extends TestCase
 {
-    private ArrayLocalizator $arrayLocalizator;
+    private JsonLocalizator $jsonLocalizator;
 
     private function getMethodNameByReflectionObject(string $name)
     {
-        $class = new \ReflectionObject($this->arrayLocalizator);
+        $class = new \ReflectionObject($this->jsonLocalizator);
         $method = $class->getMethod($name);
         $method->setAccessible(true);
         return $method;
@@ -26,9 +27,9 @@ final class ArrayLocalizatorTest extends TestCase
     private function data(): array
     {
         return [
-            'file' => __DIR__ . '/../../../lang/en/login.php',
-            'defaultLang' => __DIR__ . '/../../../lang/en',
-            'fallBackLang' => __DIR__ . '/../../../lang/fa'
+            'file' => __DIR__ . '/../../../lang/en.json',
+            'defaultLang' => __DIR__ . '/../../../lang/en.json',
+            'fallBackLang' => __DIR__ . '/../../../lang/fa.json'
         ];
     }
 
@@ -42,14 +43,14 @@ final class ArrayLocalizatorTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->arrayLocalizator = new ArrayLocalizator;
+        $this->jsonLocalizator = new JsonLocalizator;
     }
 
     public function testGetMethodCanReturnLinesOfTextFromLanguageFile(): void
     {
         $method = $this->getMethodNameByReflectionObject('get');
-        $get = $method->invokeArgs($this->arrayLocalizator, [
-            'hello',
+        $get = $method->invokeArgs($this->jsonLocalizator, [
+            'hi',
             $this->data(),
             $this->replacement()
         ]);
@@ -61,7 +62,7 @@ final class ArrayLocalizatorTest extends TestCase
     public function testGetMethodCanReturnEmptyStringIfKeyDoesNotExists(): void
     {
         $method = $this->getMethodNameByReflectionObject('get');
-        $get = $method->invokeArgs($this->arrayLocalizator, [
+        $get = $method->invokeArgs($this->jsonLocalizator, [
             'by',
             $this->data(),
             $this->replacement()
@@ -75,8 +76,8 @@ final class ArrayLocalizatorTest extends TestCase
     public function testGetMethodCanReturnFallback(): void
     {
         $method = $this->getMethodNameByReflectionObject('get');
-        $get = $method->invokeArgs($this->arrayLocalizator, [
-            'hi',
+        $get = $method->invokeArgs($this->jsonLocalizator, [
+            'hello',
             $this->data(),
             $this->replacement()
         ]);
@@ -88,7 +89,7 @@ final class ArrayLocalizatorTest extends TestCase
     public function testAllMethodCanReturnAllDateFromTranslateFile(): void
     {
         $method = $this->getMethodNameByReflectionObject('all');
-        $all = $method->invokeArgs($this->arrayLocalizator, [$this->data()['file']]);
+        $all = $method->invokeArgs($this->jsonLocalizator, [$this->data()['file']]);
 
         $this->assertNotEmpty($all);
         $this->assertIsArray($all);
@@ -99,6 +100,35 @@ final class ArrayLocalizatorTest extends TestCase
         $this->expectException(FileException::class);
 
         $method = $this->getMethodNameByReflectionObject('all');
-        $method->invokeArgs($this->arrayLocalizator, [$this->data()['file'] . '../']);
+        $method->invokeArgs($this->jsonLocalizator, [$this->data()['file'] . '../']);
+    }
+
+    public function testAllMethodCanThrowJsonValidationException(): void
+    {
+        $this->expectException(JsonValidationException::class);
+
+        $method = $this->getMethodNameByReflectionObject('all');
+        $method->invokeArgs($this->jsonLocalizator, [__DIR__ . '/../../../lang/notJson.json']);
+    }
+
+    public function testIsJsonMethodCanReturnFalseIfDataParamIsEmptyOrNull(): void
+    {
+        $method = $this->getMethodNameByReflectionObject('isJson');
+        $isJson = $method->invokeArgs($this->jsonLocalizator, ['']);
+
+        $this->assertIsBool($isJson);
+        $this->assertFalse($isJson);
+    }
+
+    public function testIsJsonMethodCanReturnFalseIfJsonFileValidationFail(): void
+    {
+        $method = $this->getMethodNameByReflectionObject('isJson');
+        $isJson = $method->invokeArgs(
+            $this->jsonLocalizator,
+            [__DIR__ . '/../../../lang/notJson.json']
+        );
+
+        $this->assertIsBool($isJson);
+        $this->assertFalse($isJson);
     }
 }
