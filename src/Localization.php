@@ -47,12 +47,27 @@ final class Localization
             $translateKey = $this->getTranslateKey($this->config->defaultLang . '.' . $key);
 
         if (is_array($translateKey))
-            return $this->localizator->all($file);
+            return $this->getAllDataFromFile($file);
 
         if (is_string($translateKey))
             $text = $this->localizator->get($translateKey, $this->data($file), $replacement);
 
         return safeText($text);
+    }
+
+    private function getAllDataFromFile(string $file): array
+    {
+        $data = $this->data($file);
+        $allData = $this->localizator->all($file);
+
+        if (empty($allData) && !is_null($data['fallBackLang'])) {
+            $fallBackDir = str_replace($data['defaultLang'], $data['fallBackLang'], $data['file']);
+            if (!checkFile($fallBackDir)) {
+                throw new FileException($fallBackDir);
+            }
+            $allData = $this->localizator->all($fallBackDir);
+        }
+        return $allData;
     }
 
     /**
@@ -123,17 +138,15 @@ final class Localization
         };
 
         return checkFile($translateFilePath)
-            ? $translateFilePath
+            ? realpath($translateFilePath)
             : throw new FileException($translateFilePath);
     }
 
     private function baseLanguagePath(): string
     {
-        $baseLanguagePath = $this->config->langDir . $this->config->defaultLang;
-
-        return checkFile($baseLanguagePath)
-            ? $baseLanguagePath
-            : throw new FileException($baseLanguagePath);
+        return checkFile($this->config->defaultLang)
+            ? $this->config->defaultLang
+            : throw new FileException($this->config->defaultLang);
     }
 
     public function __toString(): string

@@ -25,11 +25,11 @@ abstract class AbstractLocalizator implements Localizator
      * handle replacement param
      *
      * @param array $replacement
-     * @param string $data
-     * @return string
-     * return line of text from language file with replacement params
+     * @param string $data lines of text from language file
+     * @return string line of text from language file with replacement params
+     *
      */
-    protected function replacement(array $replacement, string $data)
+    private function replacement(array $replacement, string $data): string
     {
         $this->checkReplacement($replacement);
 
@@ -52,25 +52,27 @@ abstract class AbstractLocalizator implements Localizator
      * @throws \PhpLocalization\Exceptions\Localizator\LocalizatorsException
      * return LocalizatorsException if replacement is not valid
      */
-    protected function checkReplacement(array $replacement)
+    private function checkReplacement(array $replacement)
     {
         $key = array_keys($replacement)[0];
         $value = array_values($replacement)[0];
 
-        if (!is_string($key))
+        if (!is_string($key) || empty($key))
             throw new LocalizatorsException($key . ' Key Replacement Is Not Valid');
 
-        if (!is_string($value))
+        if (!is_string($value) || empty($value))
             throw new LocalizatorsException($value . ' Value Replacement Should Be String');
     }
 
-    protected function detectCase(string $string)
+    private function detectCase(string $string): string
     {
         $string = substr($string, 1);
 
         if (preg_match('/\b[A-Z0-9]+[a-z0-9]+\b/', $string)) return 'pascal';
         if (preg_match('/\b[A-Z0-9]+\b/', $string)) return 'upper';
         if (preg_match('/\b[a-z0-9]+\b/', $string)) return 'lower';
+
+        return 'lower';
     }
 
     /**
@@ -81,11 +83,11 @@ abstract class AbstractLocalizator implements Localizator
      */
     protected function fallBack(array $data)
     {
-        if (is_null($data['fallBackLang'])) return;
+        if (is_null($data['fallBackLang'])) return null;
 
         $dir = str_replace($data['defaultLang'], $data['fallBackLang'], $data['file']);
 
-        return checkFile($dir) ? $dir : throw new FileException($dir);
+        return checkFile($dir) ? realpath($dir) : throw new FileException($dir);
     }
 
     protected function getDataByArray(

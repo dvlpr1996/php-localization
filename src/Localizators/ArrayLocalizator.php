@@ -25,7 +25,7 @@ class ArrayLocalizator extends Localizator
     public function all(string $file): array
     {
         return checkFile($file)
-            ? require_once $file
+            ? require $file
             : throw new FileException($file);
     }
 }
