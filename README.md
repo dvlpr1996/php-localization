@@ -10,6 +10,14 @@ Php Localization Library
 
 - PHP 8 or higher
 
+## Install
+
+You can install the package via composer:
+
+```bash
+composer require dvlpr1996/php-localization
+```
+
 ## Features
 
 Localization With 2 Drivers
