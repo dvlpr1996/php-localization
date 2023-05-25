@@ -20,6 +20,7 @@ use PhpLocalization\Localizators\Contract\LocalizatorInterface as Localizator;
 
 final class Localization
 {
+    private string $file;
     private Config $config;
     private Localizator $localizator;
     private const LOCALIZATOR_NAMESPACE = 'PhpLocalization\\Localizators\\';
@@ -40,31 +41,30 @@ final class Localization
      */
     public function lang(string $key, array $replacement = []): array|string
     {
-        $file = $this->getTranslateFile($key);
+        $this->file = $this->getTranslateFile($key);
         $translateKey = $this->getTranslateKey($key);
 
-        if ($this->config->driver === 'json')
+        if ($this->config->isJsonDriver())
             $translateKey = $this->getTranslateKey($this->config->defaultLang . '.' . $key);
 
         if (is_array($translateKey))
-            return $this->getAllDataFromFile($file);
+            return $this->getAllDataFromFile();
 
         if (is_string($translateKey))
-            $text = $this->localizator->get($translateKey, $this->data($file), $replacement);
+            $text = $this->localizator->get($translateKey, $this->data(), $replacement);
 
         return safeText($text);
     }
 
-    private function getAllDataFromFile(string $file): array
+    private function getAllDataFromFile(): array
     {
-        $data = $this->data($file);
-        $allData = $this->localizator->all($file);
+        $data = $this->data();
+        $allData = $this->localizator->all($this->file);
 
         if (empty($allData) && !is_null($data['fallBackLang'])) {
             $fallBackDir = str_replace($data['defaultLang'], $data['fallBackLang'], $data['file']);
-            if (!checkFile($fallBackDir)) {
+            if (!checkFile($fallBackDir))
                 throw new FileException($fallBackDir);
-            }
             $allData = $this->localizator->all($fallBackDir);
         }
         return $allData;
@@ -72,19 +72,24 @@ final class Localization
 
     /**
      * Prepared Data For Lang Based On Configs
-     *
-     * @param string $file
      * @return array
      */
-    private function data(string $file): array
+    private function data(): array
     {
         return [
-            'file' => $file,
+            'file' => $this->file,
             'defaultLang' => $this->config->defaultLang,
             'fallBackLang' => $this->config->fallBackLang,
         ];
     }
 
+    /**
+     * Return Localizator Class Name
+     *
+     * @param mixed $className
+     * @throws \PhpLocalization\Exceptions\Localizator\ClassNotFoundException;
+     * @return string
+     */
     private function getLocalizatorClassName(string $className): string
     {
         $fullClassName =  $this->fullClassName($className);
@@ -94,6 +99,11 @@ final class Localization
             : throw new ClassNotFoundException($className . ' Localizator not exists');
     }
 
+    /**
+     * Return Full Localizator Class Name
+     * @param mixed $className
+     * @return string
+     */
     private function fullClassName(string $className): string
     {
         return self::LOCALIZATOR_NAMESPACE . ucwords($className . 'Localizator');
@@ -110,13 +120,15 @@ final class Localization
         $this->localizator = $localizator;
     }
 
-    private function getTranslateKey(string $key)
+    private function getTranslateKey(string $key): string|array
     {
         $keys = explode('.', $key);
+
         if (count($keys) > 1) {
             unset($keys[0]);
             return implode('.', $keys);
         }
+
         return $keys;
     }
 
@@ -127,10 +139,7 @@ final class Localization
 
         $key = explode('.', $key);
 
-        $extension = match ($this->config->driver) {
-            'array' => '.php',
-            'json' =>  '.json',
-        };
+        $extension = $this->getExtension();
 
         $translateFilePath = match ($extension) {
             '.php' => $this->baseLanguagePath() . '/' . $key[0] . $extension,
@@ -140,6 +149,14 @@ final class Localization
         return checkFile($translateFilePath)
             ? realpath($translateFilePath)
             : throw new FileException($translateFilePath);
+    }
+
+    private function getExtension(): string
+    {
+        return match ($this->config->driver) {
+            'array' => '.php',
+            'json' =>  '.json',
+        };
     }
 
     private function baseLanguagePath(): string

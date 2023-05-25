@@ -82,6 +82,11 @@ final class ConfigHandler
         return __CLASS__;
     }
 
+    public function isJsonDriver(): bool
+    {
+        return $this->driver === 'json';
+    }
+
     /**
      * Validation Driver
      *
