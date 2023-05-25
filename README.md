@@ -1,8 +1,10 @@
 # PHP Localization
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/dvlpr1996/php-localization?style=flat)](https://packagist.org/packages/dvlpr1996/php-localization)
+[![Total Downloads](https://img.shields.io/packagist/dt/dvlpr1996/php-localization)](https://packagist.org/packages/dvlpr1996/php-localization)
 
-Php Localization Library 
+Php Localization Library
 
 ## Requirements
 
@@ -10,17 +12,14 @@ Php Localization Library
 
 ## Features
 
-Localization With 3 Drivers
+Localization With 2 Drivers
 
 - Array
 - Json
-- 
-
-Polarization
 
 ## Documentation
 
-See the [documentation](CHANGELOG.md) for detailed installation and usage instructions.
+See the [documentation](https://github.com/dvlpr1996/php-localization/wiki) for detailed installation and usage instructions.
 
 ## Changelog
 
@@ -32,7 +31,7 @@ If you discover any issues, please using the issue tracker.
 
 ## Credits
 
--   [Nima jahan bakhshian](https://github.com/dvlpr1996)
+- [Nima jahan bakhshian](https://github.com/dvlpr1996)
 
 ## License
 
