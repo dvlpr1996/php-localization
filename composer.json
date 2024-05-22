@@ -4,7 +4,7 @@
     "keywords": [
         "php",
         "localization",
-        "Associative Array",
+        "Array File",
         "php-localization",
         "Json File"
     ],
@@ -12,12 +12,12 @@
     "license": "MIT",
     "type": "library",
     "require": {
-        "php": "^8.0"
+        "php": "^8.1"
     },
     "minimum-stability": "stable",
     "authors": [
         {
-            "name": "Nima",
+            "name": "Nima jahan bakhshian",
             "email": "nimajahanbakhshian@gmail.com",
             "role": "Developer"
         }
@@ -32,7 +32,7 @@
     },
     "autoload": {
         "psr-4": {
-            "PhpLocalization\\": "src/"
+            "dvlpr1996\\PhpLocalization\\": "src/"
         },
         "files": [
             "./src/PhpLocalizationHelpers.php"
@@ -40,7 +40,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "PhpLocalization\\Tests\\": "Tests/Unit/"
+            "dvlpr1996\\PhpLocalization\\Tests\\": "Tests/Unit/"
         }
     },
     "scripts": {
