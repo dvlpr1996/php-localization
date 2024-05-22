@@ -16,6 +16,7 @@ use PhpLocalization\Exceptions\File\FileException;
 use PhpLocalization\Config\ConfigHandler as Config;
 use PhpLocalization\Exceptions\Localizator\LocalizatorsException;
 use PhpLocalization\Exceptions\Localizator\ClassNotFoundException;
+use PhpLocalization\Exceptions\Config\MissingConfigOptionsException;
 use PhpLocalization\Localizators\Contract\LocalizatorInterface as Localizator;
 
 final class Localization
@@ -25,8 +26,12 @@ final class Localization
     private Localizator $localizator;
     private const LOCALIZATOR_NAMESPACE = 'PhpLocalization\\Localizators\\';
 
-    public function __construct(array $configs = [])
+    public function __construct(array $configs)
     {
+        if(empty($configs)) {
+            throw new MissingConfigOptionsException();
+        }
+
         $this->config = new Config($configs);
         $this->localizatorSetter($this->config->driver);
     }
@@ -112,10 +117,10 @@ final class Localization
     private function localizatorSetter($driver)
     {
         $className = $this->getLocalizatorClassName($driver);
-        $this->setLocalizatorClass(new $className);
+        $this->setLocalizatorStrategy(new $className);
     }
 
-    private function setLocalizatorClass(Localizator $localizator)
+    private function setLocalizatorStrategy(Localizator $localizator)
     {
         $this->localizator = $localizator;
     }
@@ -168,6 +173,11 @@ final class Localization
 
     public function __toString(): string
     {
-        return __CLASS__;
+        return "<ul>
+            <li>driver : {$this->config->driver}</li>
+            <li>langDir : {$this->config->langDir}</li>
+            <li>defaultLang : {$this->config->defaultLang}</li>
+            <li>fallBackLang : {$this->config->fallBackLang}</li>
+        </ul>";
     }
 }
