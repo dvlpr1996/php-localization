@@ -28,38 +28,27 @@ final class AbstractLocalizatorTest extends TestCase
         $this->abstractLocalizator = $this->getMockForAbstractClass(AbstractLocalizator::class);
     }
 
-    public function testCheckReplacementMethodCanValidateReplacementParam(): void
+    public function testCheckReplacementKeyMethodCanValidateReplacementParam(): void
     {
-        $method = $this->getMethodNameByReflectionObject('checkReplacement');
-        $checkReplacement = $method->invokeArgs($this->abstractLocalizator, [
+        $method = $this->getMethodNameByReflectionObject('checkReplacementKey');
+        $checkReplacementKey = $method->invokeArgs($this->abstractLocalizator, [
             [
                 ':FNAME' => 'john',
                 ':LNAME' => 'doe'
             ]
         ]);
 
-        $this->assertNull($checkReplacement);
+        $this->assertNull($checkReplacementKey);
     }
 
-    public function testCheckReplacementMethodCanThrowLocalizatorsExceptionForKey(): void
+    public function testCheckReplacementKeyMethodCanThrowLocalizatorsExceptionForKey(): void
     {
         $this->expectException(LocalizatorsException::class);
 
-        $method = $this->getMethodNameByReflectionObject('checkReplacement');
+        $method = $this->getMethodNameByReflectionObject('checkReplacementKey');
         $method->invokeArgs($this->abstractLocalizator, [
             [
                 '' => 'john',
-            ]
-        ]);
-    }
-    public function testCheckReplacementMethodCanThrowLocalizatorsExceptionForValue(): void
-    {
-        $this->expectException(LocalizatorsException::class);
-
-        $method = $this->getMethodNameByReflectionObject('checkReplacement');
-        $method->invokeArgs($this->abstractLocalizator, [
-            [
-                ':fname' => '',
             ]
         ]);
     }
