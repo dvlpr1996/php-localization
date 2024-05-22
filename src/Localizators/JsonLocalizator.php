@@ -16,7 +16,7 @@ use PhpLocalization\Exceptions\File\FileException;
 use PhpLocalization\Exceptions\Localizator\JsonValidationException;
 use PhpLocalization\Localizators\Contract\AbstractLocalizator as Localizator;
 
-class JsonLocalizator extends Localizator
+final class JsonLocalizator extends Localizator
 {
     public function get(string $key, array $data, array $replacement = []): string
     {
@@ -42,6 +42,11 @@ class JsonLocalizator extends Localizator
             return false;
 
         return true;
+    }
+
+    public function __toString(): string
+    {
+        return __CLASS__;
     }
 
 }

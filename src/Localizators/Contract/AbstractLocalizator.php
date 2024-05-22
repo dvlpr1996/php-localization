@@ -31,13 +31,13 @@ abstract class AbstractLocalizator implements Localizator
      */
     private function replacement(array $replacement, string $data): string
     {
-        $this->checkReplacement($replacement);
+        $this->checkReplacementKey($replacement);
 
         foreach ($replacement as $key => $value) {
             $data = match ($this->detectCase($key)) {
-                'pascal' => str_ireplace($key, ucfirst($value), $data),
-                'upper' => str_ireplace($key, strtoupper($value), $data),
-                'lower' => str_ireplace($key, strtolower($value), $data)
+                'pascal' => str_ireplace($key, ucfirst($value ?? $key), $data),
+                'upper' => str_ireplace($key, strtoupper($value ?? $key), $data),
+                'lower' => str_ireplace($key, strtolower($value ?? $key), $data)
             };
         }
 
@@ -52,25 +52,27 @@ abstract class AbstractLocalizator implements Localizator
      * @throws \PhpLocalization\Exceptions\Localizator\LocalizatorsException
      * return LocalizatorsException if replacement is not valid
      */
-    private function checkReplacement(array $replacement)
+    private function checkReplacementKey(array $replacement)
     {
         $key = array_keys($replacement)[0];
-        $value = array_values($replacement)[0];
 
-        if (!is_string($key) || empty($key))
-            throw new LocalizatorsException($key . ' Key Replacement Is Not Valid');
+        if (!preg_match('/^:[A-Za-z0-9]+\b/', $key))
+            throw new LocalizatorsException($key . ' Replacement Parameter Key Is Not Valid');
 
-        if (!is_string($value) || empty($value))
-            throw new LocalizatorsException($value . ' Value Replacement Should Be String');
+        if (empty($key))
+            throw new LocalizatorsException($key . ' Replacement Parameter Key Can Not Be Empty');
     }
 
     private function detectCase(string $string): string
     {
         $string = substr($string, 1);
 
-        if (preg_match('/\b[A-Z0-9]+[a-z0-9]+\b/', $string)) return 'pascal';
-        if (preg_match('/\b[A-Z0-9]+\b/', $string)) return 'upper';
-        if (preg_match('/\b[a-z0-9]+\b/', $string)) return 'lower';
+        if (preg_match('/^([A-Z]+)$/', $string)) return 'upper';
+        if (preg_match('/^([a-z]+)$/', $string)) return 'lower';
+        if (preg_match('/\b[A-Z]+[a-z]+\b/', $string)) return 'pascal';
+        if (preg_match('/^([A-Za-z][a-z]*)+$/', $string)) return 'title';
+        if (preg_match('/^[a-z]+(-[a-z0-9]+)*$/', $string)) return 'kebab';
+        if (preg_match('/^[A-Z]+(_[A-Z0-9]+)*$/', $string)) return 'constant';
 
         return 'lower';
     }

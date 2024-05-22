@@ -28,4 +28,9 @@ final class ArrayLocalizator extends Localizator
             ? require $file
             : throw new FileException($file);
     }
+
+    public function __toString(): string
+    {
+        return __CLASS__;
+    }
 }
