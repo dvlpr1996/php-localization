@@ -24,7 +24,7 @@ final class ConfigHandler
     private ?string $fallBackLang;
     private string $defaultLang = 'en';
 
-    private array $allowedDrivers = ['array', 'json', 'gettext'];
+    private array $allowedDrivers = ['array', 'json'];
 
     private array $allowedConfigs = [
         'driver', 'langDir', 'defaultLang', 'fallBackLang'
@@ -37,7 +37,7 @@ final class ConfigHandler
         $this->driver = $configs['driver'];
         $this->langDir = $configs['langDir'];
         $this->defaultLang = $configs['defaultLang'];
-        $this->fallBackLang = $configs['fallBackLang'];
+        $this->fallBackLang = $configs['fallBackLang'] ?? null;
     }
 
     /**
@@ -50,36 +50,46 @@ final class ConfigHandler
      */
     public function checkConfigs(array $configs): void
     {
-        $diffConfigs = array_diff($this->allowedConfigs, array_values(array_keys($configs)));
+        $diffConfigs = array_diff($this->allowedConfigs, array_keys($configs));
 
-        if (!empty($diffConfigs))
+        if (!empty($diffConfigs)) {
             throw new MissingConfigOptionsException();
+        }
 
         foreach ($configs as $key => $value) {
-            if ($key === 'fallBackLang' && is_null($value) || empty($value))
+            if (($key === 'fallBackLang') && (is_null($value) || empty($value))) {
                 continue;
+            }
 
-            if (!is_string($value) || empty($value))
+            if (!is_string($value) || empty($value)) {
                 throw new ConfigInvalidValueException('Value Can Not Be Empty Or Null');
+            }
         }
     }
 
     public function __get(string $property)
     {
-        if (!property_exists($this, $property))
+        if (!property_exists($this, $property)) {
             throw new PropertyNotExistsException($property);
+        }
 
         return match ($property) {
             'driver' => $this->checkDriver($this->$property),
             'langDir' =>  $this->checkDirectory($this->$property),
             'defaultLang' =>  $this->checkDefaultLang($this->$property),
             'fallBackLang' =>  $this->checkFallBackLang($this->$property),
+            default => throw new PropertyNotExistsException($property),
         };
     }
 
     public function __toString(): string
     {
-        return __CLASS__;
+        return "<ul>
+            <li>driver: {$this->driver}</li>
+            <li>langDir: {$this->langDir}</li>
+            <li>defaultLang: {$this->defaultLang}</li>
+            <li>fallBackLang: {$this->fallBackLang}</li>
+        </ul>";
     }
 
     public function isJsonDriver(): bool
@@ -95,7 +105,7 @@ final class ConfigHandler
      * @return string
      * Driver If Is Valid Otherwise Return ConfigInvalidValueException
      */
-    private function checkDriver(string $driver)
+    private function checkDriver(string $driver): string
     {
         return in_array(strtolower($driver), $this->allowedDrivers)
             ? $driver
@@ -120,17 +130,18 @@ final class ConfigHandler
      *
      * @param string|null $fallBckLang
      * @throws \PhpLocalization\Exceptions\File\FileException
-     * @return $fallBckLang if isset or exists
+     * @return string|null
      */
     private function checkFallBackLang(?string $fallBckLang): ?string
     {
-        if (is_null($fallBckLang) || empty($fallBckLang))
+        if (is_null($fallBckLang) || empty($fallBckLang)) {
             return null;
+        }
 
         return $this->checkDirectory($this->langDir . $fallBckLang);
     }
 
-    private function checkDirectory(string $path): string
+    private function checkDirectory(string $path): string|false
     {
         return (is_dir($path)) ? realpath($path) : throw new FileException($path);
     }
