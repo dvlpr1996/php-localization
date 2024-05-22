@@ -8,4 +8,9 @@ class MissingConfigOptionsException extends \Exception
     {
         parent::__construct('Config Array Is Not Valid', $statusCode, $previous);
     }
+
+    public function __toString(): string
+    {
+        return __CLASS__ . " [{$this->code}]: {$this->message}\n";
+    }
 }

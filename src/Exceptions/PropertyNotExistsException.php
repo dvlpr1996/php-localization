@@ -2,15 +2,25 @@
 
 namespace PhpLocalization\Exceptions;
 
+use Throwable;
+
 class PropertyNotExistsException extends \Exception
 {
-    public function __construct(string $message, int $statusCode = 500, $previous = null)
+    protected string $property;
+
+    public function __construct(string $property, int $statusCode = 500, Throwable $previous = null)
     {
-        parent::__construct($message . ' Not Exists', $statusCode, $previous);
+        $this->property = $property;
+        parent::__construct("The property '{$property}' does not exist.", $statusCode, $previous);
     }
 
-    public function __toString()
+    public function getProperty(): string
     {
-        return __CLASS__ . ' : ' . $this->message;
+        return $this->property;
+    }
+
+    public function __toString(): string
+    {
+        return __CLASS__ . " [{$this->code}]: {$this->message}\n";
     }
 }

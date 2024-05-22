@@ -9,8 +9,8 @@ class FileException extends \Exception
         parent::__construct($message . ' File Path Not Exists', $statusCode, $previous);
     }
 
-    public function __toString()
+    public function __toString(): string
     {
-        return __CLASS__ . ' : ' . $this->message;
+        return __CLASS__ . " [{$this->code}]: {$this->message}\n";
     }
 }
