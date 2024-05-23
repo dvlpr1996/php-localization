@@ -1,6 +1,6 @@
 <?php
 
-namespace PhpLocalization\Exceptions\Config;
+namespace dvlpr1996\PhpLocalization\Exceptions\Config;
 
 class ConfigInvalidValueException extends \Exception
 {

@@ -6,10 +6,10 @@ namespace PhpLocalization\Tests\Config;
 
 use ReflectionObject;
 use PHPUnit\Framework\TestCase;
-use PhpLocalization\Config\ConfigHandler;
-use PhpLocalization\Exceptions\File\FileException;
-use PhpLocalization\Exceptions\PropertyNotExistsException;
-use PhpLocalization\Exceptions\Config\ConfigInvalidValueException;
+use dvlpr1996\PhpLocalization\Config\ConfigHandler;
+use dvlpr1996\PhpLocalization\Exceptions\File\FileException;
+use dvlpr1996\PhpLocalization\Exceptions\PropertyNotExistsException;
+use dvlpr1996\PhpLocalization\Exceptions\Config\ConfigInvalidValueException;
 
 /**
  * @covers ConfigHandler

@@ -10,11 +10,11 @@
 
 declare(strict_types=1);
 
-namespace PhpLocalization\Localizators\Contract;
+namespace dvlpr1996\PhpLocalization\Localizators\Contract;
 
-use PhpLocalization\Exceptions\File\FileException;
-use PhpLocalization\Exceptions\Localizator\LocalizatorsException;
-use PhpLocalization\Localizators\Contract\LocalizatorInterface as Localizator;
+use dvlpr1996\PhpLocalization\Exceptions\File\FileException;
+use dvlpr1996\PhpLocalization\Exceptions\Localizator\LocalizatorsException;
+use dvlpr1996\PhpLocalization\Localizators\Contract\LocalizatorInterface as Localizator;
 
 abstract class AbstractLocalizator implements Localizator
 {
@@ -48,8 +48,8 @@ abstract class AbstractLocalizator implements Localizator
      * Validation Replacement Param
      *
      * @param array $replacement
-     * @throws \PhpLocalization\Exceptions\Localizator\LocalizatorsException
-     * @throws \PhpLocalization\Exceptions\Localizator\LocalizatorsException
+     * @throws dvlpr1996\PhpLocalization\Exceptions\Localizator\LocalizatorsException
+     * @throws dvlpr1996\PhpLocalization\Exceptions\Localizator\LocalizatorsException
      * return LocalizatorsException if replacement is not valid
      */
     private function checkReplacementKey(array $replacement)
@@ -81,7 +81,7 @@ abstract class AbstractLocalizator implements Localizator
      * handle fallBack config
      *
      * @param array $data
-     * @throws \PhpLocalization\Exceptions\File\FileException
+     * @throws dvlpr1996\PhpLocalization\Exceptions\File\FileException
      */
     protected function fallBack(array $data)
     {

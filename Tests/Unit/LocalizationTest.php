@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace PhpLocalization\Tests;
+namespace dvlpr1996\PhpLocalization\Tests;
 
 use PHPUnit\Framework\TestCase;
-use PhpLocalization\Localization;
-use PhpLocalization\Exceptions\File\FileException;
-use PhpLocalization\Exceptions\Localizator\LocalizatorsException;
-use PhpLocalization\Exceptions\Localizator\ClassNotFoundException;
+use dvlpr1996\PhpLocalization\Localization;
+use dvlpr1996\PhpLocalization\Exceptions\File\FileException;
+use dvlpr1996\PhpLocalization\Exceptions\Localizator\LocalizatorsException;
+use dvlpr1996\PhpLocalization\Exceptions\Localizator\ClassNotFoundException;
 
 /**
  * @covers Localization
@@ -75,7 +75,7 @@ final class LocalizationTest extends TestCase
         ]);
 
         $this->assertIsString($className);
-        $this->assertEquals('PhpLocalization\Localizators\ArrayLocalizator', $className);
+        $this->assertEquals('dvlpr1996\PhpLocalization\Localizators\ArrayLocalizator', $className);
     }
 
     public function testGetLocalizatorClassNameMethodCanThrowClassNotFoundException(): void
@@ -94,7 +94,7 @@ final class LocalizationTest extends TestCase
         ]);
 
         $this->assertIsString($className);
-        $this->assertEquals('PhpLocalization\Localizators\ArrayLocalizator', $className);
+        $this->assertEquals('dvlpr1996\PhpLocalization\Localizators\ArrayLocalizator', $className);
     }
 
     public function testGetTranslateKeyMethodCanReturnStringWhenKeyContainsDotNotation(): void

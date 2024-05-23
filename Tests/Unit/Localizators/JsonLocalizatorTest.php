@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace PhpLocalization\Tests\Localizators;
+namespace dvlpr1996\PhpLocalization\Tests\Localizators;
 
 use PHPUnit\Framework\TestCase;
-use PhpLocalization\Localizators\JsonLocalizator;
-use PhpLocalization\Exceptions\File\FileException;
-use PhpLocalization\Exceptions\Localizator\JsonValidationException;
+use dvlpr1996\PhpLocalization\Localizators\JsonLocalizator;
+use dvlpr1996\PhpLocalization\Exceptions\File\FileException;
+use dvlpr1996\PhpLocalization\Exceptions\Localizator\JsonValidationException;
 
 /**
  * @covers JsonLocalizator

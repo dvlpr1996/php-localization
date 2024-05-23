@@ -1,6 +1,6 @@
 <?php
 
-namespace PhpLocalization\Exceptions\File;
+namespace dvlpr1996\PhpLocalization\Exceptions\File;
 
 class FileException extends \Exception
 {

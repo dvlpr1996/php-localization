@@ -1,6 +1,6 @@
 <?php
 
-namespace PhpLocalization\Exceptions\Localizator;
+namespace dvlpr1996\PhpLocalization\Exceptions\Localizator;
 
 class JsonValidationException extends \Exception
 {

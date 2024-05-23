@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace PhpLocalization\Tests\Localizators\Contract;
+namespace dvlpr1996\PhpLocalization\Tests\Localizators\Contract;
 
 use PHPUnit\Framework\TestCase;
-use PhpLocalization\Localizators\Contract\AbstractLocalizator;
-use PhpLocalization\Exceptions\Localizator\LocalizatorsException;
+use dvlpr1996\PhpLocalization\Localizators\Contract\AbstractLocalizator;
+use dvlpr1996\PhpLocalization\Exceptions\Localizator\LocalizatorsException;
 
 /**
  * @covers AbstractLocalizator

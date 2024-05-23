@@ -1,6 +1,6 @@
 <?php
 
-namespace PhpLocalization\Exceptions;
+namespace dvlpr1996\PhpLocalization\Exceptions;
 
 use Throwable;
 

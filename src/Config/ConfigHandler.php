@@ -10,12 +10,12 @@
 
 declare(strict_types=1);
 
-namespace PhpLocalization\Config;
+namespace dvlpr1996\PhpLocalization\Config;
 
-use PhpLocalization\Exceptions\File\FileException;
-use PhpLocalization\Exceptions\PropertyNotExistsException;
-use PhpLocalization\Exceptions\Config\ConfigInvalidValueException;
-use PhpLocalization\Exceptions\Config\MissingConfigOptionsException;
+use dvlpr1996\PhpLocalization\Exceptions\File\FileException;
+use dvlpr1996\PhpLocalization\Exceptions\PropertyNotExistsException;
+use dvlpr1996\PhpLocalization\Exceptions\Config\ConfigInvalidValueException;
+use dvlpr1996\PhpLocalization\Exceptions\Config\MissingConfigOptionsException;
 
 final class ConfigHandler
 {
@@ -44,8 +44,8 @@ final class ConfigHandler
      * Validation Configs
      *
      * @param array $configs
-     * @throws \PhpLocalization\Exceptions\Config\MissingConfigOptionsException
-     * @throws \PhpLocalization\Exceptions\Config\ConfigInvalidValueException
+     * @throws dvlpr1996\PhpLocalization\Exceptions\Config\MissingConfigOptionsException
+     * @throws dvlpr1996\PhpLocalization\Exceptions\Config\ConfigInvalidValueException
      * @return void
      */
     public function checkConfigs(array $configs): void
@@ -101,7 +101,7 @@ final class ConfigHandler
      * Validation Driver
      *
      * @param string $driver
-     * @throws \PhpLocalization\Exceptions\Config\ConfigInvalidValueException
+     * @throws dvlpr1996\PhpLocalization\Exceptions\Config\ConfigInvalidValueException
      * @return string
      * Driver If Is Valid Otherwise Return ConfigInvalidValueException
      */
@@ -116,7 +116,7 @@ final class ConfigHandler
      * Validation defaultLang Path
      *
      * @param string $path
-     * @throws \PhpLocalization\Exceptions\File\FileException
+     * @throws dvlpr1996\PhpLocalization\Exceptions\File\FileException
      * @return string
      * defaultLang if Exists or return FileException
      */
@@ -129,7 +129,7 @@ final class ConfigHandler
      * validation FallBckLang
      *
      * @param string|null $fallBckLang
-     * @throws \PhpLocalization\Exceptions\File\FileException
+     * @throws dvlpr1996\PhpLocalization\Exceptions\File\FileException
      * @return string|null
      */
     private function checkFallBackLang(?string $fallBckLang): ?string

@@ -9,7 +9,7 @@
 
 declare(strict_types=1);
 
-namespace PhpLocalization\Localizators\Contract;
+namespace dvlpr1996\PhpLocalization\Localizators\Contract;
 
 interface LocalizatorInterface
 {

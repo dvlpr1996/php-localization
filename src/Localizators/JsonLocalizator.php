@@ -10,11 +10,11 @@
 
 declare(strict_types=1);
 
-namespace PhpLocalization\Localizators;
+namespace dvlpr1996\PhpLocalization\Localizators;
 
-use PhpLocalization\Exceptions\File\FileException;
-use PhpLocalization\Exceptions\Localizator\JsonValidationException;
-use PhpLocalization\Localizators\Contract\AbstractLocalizator as Localizator;
+use dvlpr1996\PhpLocalization\Exceptions\File\FileException;
+use dvlpr1996\PhpLocalization\Exceptions\Localizator\JsonValidationException;
+use dvlpr1996\PhpLocalization\Localizators\Contract\AbstractLocalizator as Localizator;
 
 final class JsonLocalizator extends Localizator
 {

@@ -10,21 +10,21 @@
 
 declare(strict_types=1);
 
-namespace PhpLocalization;
+namespace dvlpr1996\PhpLocalization;
 
-use PhpLocalization\Exceptions\File\FileException;
-use PhpLocalization\Config\ConfigHandler as Config;
-use PhpLocalization\Exceptions\Localizator\LocalizatorsException;
-use PhpLocalization\Exceptions\Localizator\ClassNotFoundException;
-use PhpLocalization\Exceptions\Config\MissingConfigOptionsException;
-use PhpLocalization\Localizators\Contract\LocalizatorInterface as Localizator;
+use dvlpr1996\PhpLocalization\Exceptions\File\FileException;
+use dvlpr1996\PhpLocalization\Config\ConfigHandler as Config;
+use dvlpr1996\PhpLocalization\Exceptions\Localizator\LocalizatorsException;
+use dvlpr1996\PhpLocalization\Exceptions\Localizator\ClassNotFoundException;
+use dvlpr1996\PhpLocalization\Exceptions\Config\MissingConfigOptionsException;
+use dvlpr1996\PhpLocalization\Localizators\Contract\LocalizatorInterface as Localizator;
 
 final class Localization
 {
     private string $file;
     private Config $config;
     private Localizator $localizator;
-    private const LOCALIZATOR_NAMESPACE = 'PhpLocalization\\Localizators\\';
+    private const LOCALIZATOR_NAMESPACE = 'dvlpr1996\PhpLocalization\Localizators\\';
 
     public function __construct(array $configs)
     {
@@ -92,7 +92,7 @@ final class Localization
      * Return Localizator Class Name
      *
      * @param mixed $className
-     * @throws \PhpLocalization\Exceptions\Localizator\ClassNotFoundException;
+     * @throws dvlpr1996\PhpLocalization\Exceptions\Localizator\ClassNotFoundException;
      * @return string
      */
     private function getLocalizatorClassName(string $className): string
